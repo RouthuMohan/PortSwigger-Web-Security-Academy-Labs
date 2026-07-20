@@ -9,7 +9,8 @@ This document contains commonly used SQLMap commands during Web Application Pene
 ```bash
 sqlmap -u "<URL>" --batch
 ```
-->Url must have the injected parameter
+#->Url must have the injected parameter
+
 Purpose:
 - Detect SQL Injection
 - Identify vulnerable parameter
