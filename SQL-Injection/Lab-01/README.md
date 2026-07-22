@@ -152,7 +152,7 @@ The following security practices help prevent SQL Injection vulnerabilities:
 
 ## 1. Lab Overview
 
-![Lab Overview](images/00-lab-overview.png)
+![Lab Overview](images/00-lab-overview.jpeg)
 
 The PortSwigger lab description outlining the objective and the SQL Injection scenario.
 
@@ -168,7 +168,7 @@ The application displays only released products before any testing is performed.
 
 ## 3. SQL Injection Test (`'`)
 
-![Single Quote Test](images/02-single-quote-test.png)
+![Single Quote Test](images/02-single-quote-test.jpeg)
 
 A single quote was inserted into the `category` parameter to observe how the application handled malformed SQL input.
 
@@ -176,7 +176,7 @@ A single quote was inserted into the `category` parameter to observe how the app
 
 ## 4. SQL Injection Payload (`' OR 1=1--`)
 
-![Payload](images/03-payload.png)
+![Payload](images/03-payload.jpeg)
 
 The payload modified the SQL query so that the WHERE condition always evaluated to TRUE, causing all products to be displayed.
 
@@ -184,7 +184,7 @@ The payload modified the SQL query so that the WHERE condition always evaluated 
 
 ## 5. Lab Solved
 
-![Lab Solved](images/04-lab-solved.png)
+![Lab Solved](images/04-lab-solved.jpeg)
 
 Hidden products became visible, confirming successful exploitation of the SQL Injection vulnerability and completion of the lab.
 
