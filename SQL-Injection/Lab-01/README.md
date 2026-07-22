@@ -176,7 +176,7 @@ A single quote was inserted into the `category` parameter to observe how the app
 
 ## 4. SQL Injection Payload (`' OR 1=1--`)
 
-![Payload](images/03-payload.jpeg)
+![Payload](images/03-comment-test.jpeg)
 
 The payload modified the SQL query so that the WHERE condition always evaluated to TRUE, causing all products to be displayed.
 
