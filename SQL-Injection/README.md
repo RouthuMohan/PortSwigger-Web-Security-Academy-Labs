@@ -333,11 +333,13 @@ Verify with SQLMap (if appropriate)
 
 # Lab Progress
 
+# Lab Progress
+
 | Lab | Description | Manual | SQLMap | Status |
 |-----|-------------|:------:|:------:|:------:|
 | Lab 01 | SQL Injection in WHERE Clause Allowing Retrieval of Hidden Data | ✅ | ✅ | Completed |
 | Lab 02 | SQL Injection Vulnerability Allowing Login Bypass | ✅ | N/A | Completed |
-| Lab 03 | *To Be Started* | ⏳ | ⏳ | Not Started |
+| Lab 03 | SQL Injection Attack, Querying the Database Type and Version on Oracle | ✅ | ✅ | Completed |
 
 ---
 
