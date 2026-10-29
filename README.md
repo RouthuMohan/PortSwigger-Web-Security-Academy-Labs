@@ -8,7 +8,7 @@ This repository contains my hands-on practice, write-ups, payloads, and learning
 
 The goal of this repository is to strengthen my Web Application Penetration Testing (WAPT/VAPT) skills by practicing real-world vulnerabilities.
 
-## 🧠 Vulnerabilities Covered
+## 🧠 Vulnerabilities 
 
 - SQL Injection
 - Cross-Site Scripting (XSS)
