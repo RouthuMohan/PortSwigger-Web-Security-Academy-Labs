@@ -66,7 +66,7 @@ The response included entries such as:
 ```text
 root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
-bin:x:2:2:bin:/bin:/usr/sbin/nologin
+bin:x:2:2:bin:/usr/sbin/nologin
 ```
 
 This confirmed that the application returned the contents of `/etc/passwd` instead of the requested product image.
@@ -92,17 +92,41 @@ The actual impact depends on the files accessible to the application process.
 
 ## 8. Evidence
 
-| Evidence | Description |
-|---|---|
-| 01 | PortSwigger lab overview |
-| 02 | Accessing the lab homepage |
-| 03 | Inspecting page source using Ctrl + U |
-| 04 | Identifying the image URL and filename parameter |
-| 05 | Capturing the image request in Burp Suite Proxy |
-| 06 | Configuring Burp Intruder and traversal payloads |
-| 07 | Analyzing Intruder attack results |
-| 08 | Verifying the `/etc/passwd` response |
-| 09 | PortSwigger lab solved confirmation |
+### 8.1 PortSwigger Lab Overview
+
+![PortSwigger lab overview](images/01-lab-overview.png)
+
+### 8.2 Accessing the Lab
+
+![Accessing the lab instance](images/02-access-lab.png)
+
+### 8.3 Inspecting Page Source
+
+![Inspecting page source](images/03-page-source.png)
+
+### 8.4 Identifying the Image URL
+
+![Identifying the image URL and filename parameter](images/04-image-url.png)
+
+### 8.5 Capturing the Request in Burp Suite
+
+![Capturing the image request in Burp Suite Proxy](images/05-burp-proxy-request.png)
+
+### 8.6 Configuring Burp Intruder
+
+![Configuring Burp Intruder](images/06-intruder-configuration.png)
+
+### 8.7 Analyzing Intruder Results
+
+![Analyzing Intruder attack results](images/07-intruder-results.png)
+
+### 8.8 Verifying the /etc/passwd Response
+
+![Verifying the /etc/passwd response](images/08-passwd-response.png)
+
+### 8.9 Lab Completion
+
+![PortSwigger lab solved confirmation](images/09-lab-solved.png)
 
 ## 9. Key Learning
 
